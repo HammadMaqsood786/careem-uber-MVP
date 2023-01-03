@@ -4,7 +4,9 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 function CarSelection () {
     return(
         <View style={styles.container} >
-            
+            <View style={styles.vehicleBox} >
+                
+            </View>
         </View>
     );
 }

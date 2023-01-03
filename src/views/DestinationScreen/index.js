@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -14,6 +14,16 @@ function DestinationScreen({ route, navigation }) {
         latitudeDelta: 0.0012,
         longitudeDelta: 0.0012,
     });
+
+ 
+    
+    
+    useEffect(() => {
+        (async () => {
+
+          
+        })();
+    }, []);
 
     return (
         <View style={styles.container} >

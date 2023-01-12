@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, FlatList, TouchableHighlight } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import axios from 'axios';
@@ -12,8 +12,11 @@ function DestinationScreen({ route, navigation }) {
 
     const { longitude, latitude } = currentLocation;
 
-    // console.log("longitude =======>", longitude);
-    // console.log("latitiude =======>", latitude);
+    console.log("longitude =======>", longitude);
+    console.log("latitiude =======>", latitude);
+
+    const userLongitude = longitude;
+    const userLatitude = latitude;
 
 
     const [location, setLocation] = useState({
@@ -23,16 +26,22 @@ function DestinationScreen({ route, navigation }) {
         longitudeDelta: 0.0012,
     });
 
-    const [query, setQuery] = useState("");
-    const [destination, setDestination] = useState([])
+    const userDestination = location;
 
+    const [query, setQuery] = useState("");
+    const [destination, setDestination] = useState([]);
+    const [placesBox, setPlacesBox] = useState(false);
+    const [placeName, setPlaceName] = useState("");
 
     const searchPlaces = (text) => {
         setQuery(text);
-        console.log("query =====>", query);
     }
+    console.log("query =====>", query);
 
     useEffect(() => {
+
+        const { latitude, longitude } = location;
+
         // const options = {
         //     method: 'GET',
         //     headers: {
@@ -61,8 +70,6 @@ function DestinationScreen({ route, navigation }) {
 
         //============ Foursquare api code ===============//
 
-        const radius = '300';
-
         const options = {
             method: 'GET',
             headers: {
@@ -75,52 +82,86 @@ function DestinationScreen({ route, navigation }) {
 
             .then(response => response.json())
             .then(response => {
-                console.log(response)
-                setDestination(response.results[0].geocodes.main)
+                console.log("For geocode response", response.results)
+                setDestination(response.results)
 
             })
-            // .then(response => )
-            .catch(err => console.error(err));
+            .catch(err => console.error("Error", err));
 
-        console.log("geocodes", destination);
+        // console.log("geocodes", destination);
 
-
-        // const latitiude = destination.latitude;
+        // const latitude = destination.latitude;
         // const longitude = destination.longitude;
-    
-        // // console.log("latitude", destLatitude);
-        // // console.log("longitude", destLongitude);
-    
-        // setLocation({...location, latitude, longitude});
-    
+
+        // setLocation({ ...location, latitude, longitude });
+
         // console.log('location baad wali', location);
 
     }, [query]);
 
+    // This function is used to insert the user picked location (latitude, longitude) into the location state
 
+    const selectLocation = ({ latitude, longitude }, name) => { 
+        setLocation({ ...location, latitude, longitude })
+        setPlacesBox(false);
+        setPlaceName(name);
+        console.log("location after", location)
+        // setLocationListView(false)
+    }
+    console.log("Place Name", placeName);
+
+    const navigateAndSendData = () => {
+        navigation.navigate('Cars', {
+            
+            userDestination: userDestination,
+            placeName: placeName,
+            userLatitude: userLatitude,
+            userLongitude: userLongitude
+        })
+    }
+
+    // console.log("The destination", destination);
 
     return (
         <View style={styles.container} >
 
-            <MapView style={styles.map} region={location} >
+            <MapView style={styles.map} region={location} loadingEnabled={true} >
                 <Marker
                     coordinate={location}
-                    title={'Location'}
-                    description={'Default Location'}
+                    title={'Destination'}
+                    description={'Place where you are going'}
                 />
             </MapView>
 
-            <TextInput style={styles.searchBar} cursorColor="black" placeholder='Search' onChangeText={(text) => searchPlaces(text)}>
+            <TextInput style={styles.searchBar} onFocus={() => setPlacesBox(true)} cursorColor="black" placeholder='Search' onChangeText={(text) => searchPlaces(text)}>
 
             </TextInput>
+            {placesBox &&
+                <View style={styles.placesList} >
+                    <FlatList
+                        data={destination}
+                        renderItem={({ item }) =>
+                            <TouchableHighlight
+                                activeOpacity={0.5}
+                                underlayColor={'grey'}
+                                onPress={() => selectLocation(item.geocodes.main, item.name)}>
+                                <View style={styles.placesNameBox} >
+                                    <Text style={styles.placesNames}>{item.name}</Text>
+                                </View>
+                            </TouchableHighlight>
+                        }
+                    />
+                </View>
+
+            }
 
             <View style={styles.pickupBtnContainer} >
-                <TouchableOpacity style={styles.pickupBtn} onPress={() => navigation.navigate('Cars')}  >
+                <TouchableOpacity style={styles.pickupBtn} onPress={navigateAndSendData}  >
                     <Text style={{ fontSize: 19, }} >Confirm Destination</Text>
                 </TouchableOpacity>
             </View>
 
-        </View>
+        </View >
     );
 }
 
@@ -142,11 +183,36 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginLeft: '5%',
         marginRight: '5%',
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: 'black',
         borderRadius: 30,
 
 
+    },
+    placesList: {
+        width: '90%',
+        height: '40%',
+        backgroundColor: 'white',
+        position: 'absolute',
+        marginTop: 73,
+        marginLeft: '5%',
+        marginRight: '5%',
+        borderWidth: 2,
+        borderColor: '#00e600',
+        borderRadius: 8,
+        // shadowColor: 'black',
+    },
+    placesNameBox: {
+        width: '90%',
+        height: 30,
+        borderBottomWidth: 1,
+        borderBottomColor: 'black',
+        marginTop: 5,
+        marginLeft: '5%',
+        marginRight: '5%',
+    },
+    placesNames: {
+        fontSize: 20,
     },
     pickupBtnContainer: {
         width: '100%',

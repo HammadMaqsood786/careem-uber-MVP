@@ -12,8 +12,11 @@ function DestinationScreen({ route, navigation }) {
 
     const { longitude, latitude } = currentLocation;
 
-    // console.log("longitude =======>", longitude);
-    // console.log("latitiude =======>", latitude);
+    console.log("longitude =======>", longitude);
+    console.log("latitiude =======>", latitude);
+
+    const userLongitude = longitude;
+    const userLatitude = latitude;
 
 
     const [location, setLocation] = useState({
@@ -98,7 +101,7 @@ function DestinationScreen({ route, navigation }) {
 
     // This function is used to insert the user picked location (latitude, longitude) into the location state
 
-    const selectLocation = ({ latitude, longitude }, name) => {
+    const selectLocation = ({ latitude, longitude }, name) => { 
         setLocation({ ...location, latitude, longitude })
         setPlacesBox(false);
         setPlaceName(name);
@@ -109,8 +112,11 @@ function DestinationScreen({ route, navigation }) {
 
     const navigateAndSendData = () => {
         navigation.navigate('Cars', {
+            
             userDestination: userDestination,
-            placeName: placeName
+            placeName: placeName,
+            userLatitude: userLatitude,
+            userLongitude: userLongitude
         })
     }
 
@@ -130,7 +136,7 @@ function DestinationScreen({ route, navigation }) {
             <TextInput style={styles.searchBar} onFocus={() => setPlacesBox(true)} cursorColor="black" placeholder='Search' onChangeText={(text) => searchPlaces(text)}>
 
             </TextInput>
-            { placesBox &&
+            {placesBox &&
                 <View style={styles.placesList} >
                     <FlatList
                         data={destination}

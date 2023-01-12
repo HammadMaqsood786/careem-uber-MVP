@@ -32,25 +32,28 @@ function PickupScreen({ navigation }) {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 setErrorMsg('Permission to access location was denied');
-                return;
+                return; 
             }
 
             let { coords: { latitude, longitude } } = await Location.getCurrentPositionAsync({});
             setLocation({ ...location, latitude, longitude });
-
+            // console.log("Coords===>", coords)
+            
+            
             // ========= Code for Realtime updated location ========== //
 
             // Location.watchPositionAsync({
             //     distanceInterval: 0.1,
             //     timeInterval: 100,
             // }, (response) => {
-            //     const { coords: { latitude, longitude } } = response
-            //     setLocation({ ...location, latitude, longitude })
-            // })
-
-        })();
-    }, []);
-
+                //     const { coords: { latitude, longitude } } = response
+                //     setLocation({ ...location, latitude, longitude })
+                // })
+                
+            })();
+        }, []);
+        
+        console.log("current location ====>", location);
     // console.log("This is location ======>", location)
 
     return (

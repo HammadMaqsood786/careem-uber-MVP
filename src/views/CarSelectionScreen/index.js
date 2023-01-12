@@ -6,13 +6,19 @@ function CarSelection({ route, navigation }) {
     const [vehicleActive, setVehicleActive] = useState(true);
     const [vehicle, setVehicle] = useState("");
 
-    
-    const { userDestination, placeName } = route.params;
+    const selectedVehicle = vehicle;
+
+    const { userDestination, placeName, userLongitude, userLatitude } = route.params;
     console.log("User Destination", userDestination);
     console.log("Place Name", placeName);
-    
+
+    const destLongitude = userDestination.longitude;
+    const destLatitude = userDestination.latitude;
+
+    console.log("destLongitude===>", destLongitude)
+    console.log("destLatitude===>", destLatitude)
     // const carIcon = "https://cdn-icons-png.flaticon.com/512/3202/3202926.png";
-    
+
     //vehicleActive ? styles.bigCarIcon : styles.bigCarIconActive
     // style={vehicleActive ? styles.bigCarBox : styles.bigCarBoxActive} 
 
@@ -44,7 +50,14 @@ function CarSelection({ route, navigation }) {
                 </View>
 
                 <View style={styles.pickupBtnContainer} >
-                    <TouchableOpacity style={styles.pickupBtn} onPress={() => navigation.navigate('Summary')}  >
+                    <TouchableOpacity style={styles.pickupBtn} onPress={() => navigation.navigate('Summary', {
+                        placeName: placeName,
+                        selectedVehicle: selectedVehicle,
+                        userLongitude: userLongitude,
+                        userLatitude: userLatitude,
+                        destLatitude: destLatitude,
+                        destLongitude: destLongitude,
+                    })}  >
                         <Text style={{ fontSize: 19, }} >Vehicle Selected</Text>
                     </TouchableOpacity>
                 </View>

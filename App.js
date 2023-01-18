@@ -10,7 +10,10 @@ export default function App() {
     <Provider store={store} >
       <View style={styles.container}>
         <Navigator />
-        <StatusBar style="auto" />
+        <StatusBar
+          style='auto'
+          backgroundColor="grey"
+        />
       </View>
     </Provider>
   );
@@ -22,4 +25,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
 
   },
+
 });

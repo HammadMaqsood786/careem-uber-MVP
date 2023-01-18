@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
+import { Polyline } from "react-native-maps";
 
 function CarSelection({ route, navigation }) {
 
     const [vehicleActive, setVehicleActive] = useState(true);
+    const [carMiniActive, setCarMiniActive] = useState(true);
     const [vehicle, setVehicle] = useState("");
 
     const selectedVehicle = vehicle;
@@ -17,28 +20,95 @@ function CarSelection({ route, navigation }) {
 
     console.log("destLongitude===>", destLongitude)
     console.log("destLatitude===>", destLatitude)
+
+    const location = {
+        latitude: 24.8952922,
+        longitude: 67.0823298,
+        longitudeDelta: 0.222,
+        latitudeDelta: 0.222,
+
+    }
+
+    const userLocation = {
+        longitude: userLongitude,
+        latitude: userLatitude,
+        longitudeDelta: 0.122,
+        latitudeDelta: 0.122,
+    }
+
+    const destinationLocation = {
+        longitude: destLongitude,
+        latitude: destLatitude,
+        longitudeDelta: 1.002,
+        latitudeDelta: 1.002,
+    }
     // const carIcon = "https://cdn-icons-png.flaticon.com/512/3202/3202926.png";
 
     //vehicleActive ? styles.bigCarIcon : styles.bigCarIconActive
     // style={vehicleActive ? styles.bigCarBox : styles.bigCarBoxActive} 
+    //style={styles.bigCarBox} 
 
     console.log("Vehicle", vehicle);
 
+    const activeStyling = () => {
+        setVehicle("Car AC");
+        setVehicleActive(false)
+    }
+
+    const activeStylingMini = () => {
+        setVehicle("Car Mini");
+        setCarMiniActive(false);
+        setVehicleActive(true);
+    }
+
     return (
         <View style={styles.container} >
+            <MapView style={styles.map} region={location} loadingEnabled={true} >
+                <Marker
+                    coordinate={userLocation}
+                    title={'Pickup'}
+                    description={'Your current location'}
+                />
+
+                <Polyline
+                    coordinates={[userLocation, destinationLocation]} //specify our coordinates
+                    strokeColor={"#1a8cff"}
+                    strokeWidth={5}
+                    // lineDashPattern={[1]}
+                />
+
+                <Marker
+                    coordinate={destinationLocation}
+                    title={'Destination'}
+                    description={'Place where you are going'}
+                />
+            </MapView>
+
             <View style={styles.vehicleBox} >
                 <View style={styles.carsBox} >
-                    <View style={styles.bigCarBox} onTouchStart={() => setVehicle("Car AC")} >
+                    <View style={vehicleActive ? styles.bigCarBox : styles.bigCarBoxActive} onTouchStart={activeStyling} >
                         <Image style={styles.bigCarIcon} source={{ uri: "https://cdn-icons-png.flaticon.com/512/9175/9175833.png" }} />
+                        <Text style={styles.vehicleNames} >Car AC</Text>
                     </View>
 
-                    <View style={styles.smallCarBox} onTouchStart={() => setVehicle("Car Mini")}  >
+                    <View style={carMiniActive ? styles.smallCarBox : styles.smallCarBoxActive} onTouchStart={activeStylingMini}  >
                         <Image style={styles.smallCarIcon} source={{ uri: "https://cdn-icons-png.flaticon.com/512/3202/3202926.png" }} />
+                        <Text style={styles.vehicleNames} >Car Mini</Text>
+                    </View>
+
+                    <View style={styles.bikeBox} onTouchStart={() => setVehicle("Bike")}  >
+                        <Image style={styles.bikeIcon} source={{ uri: "https://cdn-icons-png.flaticon.com/512/1168/1168041.png" }} />
+                        <Text style={styles.vehicleNames} >Bike</Text>
+                    </View>
+
+                    <View style={styles.autoBox} onTouchStart={() => setVehicle("Rickshaw")}  >
+                        <Image style={styles.autoIcon} source={{ uri: "https://cdn-icons-png.flaticon.com/512/3790/3790389.png" }} />
+                        <Text style={styles.vehicleNames} >Rickshaw</Text>
                     </View>
 
                 </View>
 
-                <View style={styles.carsBox2} >
+                {/* <View style={styles.carsBox2} >
                     <View style={styles.bikeBox} onTouchStart={() => setVehicle("Bike")}  >
                         <Image style={styles.bikeIcon} source={{ uri: "https://cdn-icons-png.flaticon.com/512/1168/1168041.png" }} />
                     </View>
@@ -47,7 +117,7 @@ function CarSelection({ route, navigation }) {
                         <Image style={styles.autoIcon} source={{ uri: "https://cdn-icons-png.flaticon.com/512/3790/3790389.png" }} />
                     </View>
 
-                </View>
+                </View> */}
 
                 <View style={styles.pickupBtnContainer} >
                     <TouchableOpacity style={styles.pickupBtn} onPress={() => navigation.navigate('Summary', {
@@ -73,8 +143,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    map: {
+        width: '100%',
+        height: '50%',
+    },
     vehicleBox: {
-        width: '90%',
+        width: '95%',
         height: '50%',
         backgroundColor: '#2E2E2E',
         borderRadius: 10,
@@ -85,39 +159,60 @@ const styles = StyleSheet.create({
         height: '50%',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        marginTop: 10,
+        marginTop: 15,
+        borderWidth: 2,
+        // position: 'relative',
+        // display: 'inline',
 
     },
     bigCarBox: {
-        width: '45%',
-        height: '80%',
+        width: '23%',
+        height: '43%',
         borderWidth: 2,
         borderColor: '#1a8cff',
         borderRadius: 8,
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
         // backgroundColor: 'white',
     },
     bigCarBoxActive: {
-        width: '45%',
-        height: '80%',
+        width: '23%',
+        height: '43%',
         borderWidth: 2,
         borderColor: '#1a8cff',
         borderRadius: 8,
-        backgroundColor: 'grey',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        backgroundColor: '#1a8cff'
     },
     bigCarIcon: {
         width: '100%',
         height: '80%',
     },
     smallCarBox: {
-        width: '45%',
-        height: '80%',
+        width: '23%',
+        height: '43%',
         borderWidth: 2,
         borderColor: '#1a8cff',
         borderRadius: 8,
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    },
+    smallCarBoxActive: {
+        width: '23%',
+        height: '43%',
+        borderWidth: 2,
+        borderColor: '#1a8cff',
+        borderRadius: 8,
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: '#1a8cff',
     },
     smallCarIcon: {
         width: '100%',
-        height: '100%',
+        height: '90%',
     },
     carsBox2: {
         width: '100%',
@@ -126,29 +221,38 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
     },
     bikeBox: {
-        width: '45%',
-        height: '80%',
+        width: '23%',
+        height: '43%',
         borderWidth: 2,
         borderColor: '#1a8cff',
         borderRadius: 8,
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
     },
     bikeIcon: {
         width: '80%',
-        height: '85%',
-        marginLeft: 10,
+        height: '80%',
+        // marginLeft: 2,
     },
     autoBox: {
-        width: '45%',
-        height: '80%',
+        width: '23%',
+        height: '43%',
         borderWidth: 2,
         borderColor: '#1a8cff',
         borderRadius: 8,
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+
     },
     autoIcon: {
-        width: '85%',
+        width: '80%',
         height: '80%',
-        marginTop: 5,
-        marginLeft: 9,
+        marginTop: 3,
+        // marginLeft: 5,
+    },
+    vehicleNames: {
+        fontSize: 15,
+        marginBottom: 5,
     },
     pickupBtnContainer: {
         width: '100%',

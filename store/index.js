@@ -1,6 +1,20 @@
-import { createStore } from 'redux';
-import reducer from './reducers/pickupReducers';
+// import { createStore } from 'redux';
+// // import { persistStore, persistReducer } from 'redux-persist';
+// import reducers from './rootReducers';
+// import reducer from './reducers/pickupReducers';
+// import storage from 'redux-persist/lib/storage';
 
-const store = createStore(reducer);
+// const persistConfig = {
+//     key: 'root',
+//     storage,
+// }
 
-export default store;
+// const persistedReducer = persistReducer(persistConfig, reducers);
+
+// const store = createStore(persistedReducer);
+// const persistor = persistStore(store);
+
+// export {
+//     store,
+//     persistor
+// }

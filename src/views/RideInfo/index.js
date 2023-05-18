@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableHighlight, TouchableOpacity, Alert } from 'react-native';
 
 
 //This is for React native paper
@@ -64,6 +64,20 @@ function Summary({ route }) {
 
     console.log("Rent====>", rent);
 
+    const findingRideAlert = () => {
+        Alert.alert('Please Wait', 'We are finding rides for you', [
+            {
+                text: 'OK'
+            },
+           
+        ],
+
+         {
+            cancelable: true,
+            }
+        )
+    }
+
 
     // console.log("Place Name===>", placeName);
     // console.log("Vehicle ====>", selectedVehicle);
@@ -93,7 +107,7 @@ function Summary({ route }) {
             </View>
 
             <View style={styles.pickupBtnContainer} >
-                <TouchableOpacity style={styles.pickupBtn} >
+                <TouchableOpacity style={styles.pickupBtn} onPress={findingRideAlert} >
                     <Text style={{ fontSize: 19, }} >Chalo letsGo</Text>
                 </TouchableOpacity>
             </View>
